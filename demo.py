@@ -10,12 +10,32 @@ from qiskit import QuantumProgram
 import Qconfig
 
 
+
 #Initialize a QuantumProgram object, with a quantum and classical register holding 3 bits
-qProgram = QuantumProgram()
+
+"""qProgram methods require dictionaries so i looked into examples
+    and found another method of adding registers"""
+
 n = 3
-qRegister = qProgram.create_quantum_registers("qRegister", n)
-cRegister = qProgram.create_classical_registers("cRegister", n)
-qCircuit = qProgram.create_circuit("qCircuit", ["qRegister"], ["cRegister"])
+QPS_SPECS = {
+    "circuits": [{
+        "name": "qCircuit",
+        "quantum_registers": [{
+            "name": "qRegister",
+            "size": n
+        }],
+        "classical_registers": [
+            {"name": "cRegister",
+             "size": n}
+        ]}]
+}
+qProgram = QuantumProgram(specs=QPS_SPECS)
+
+
+
+qRegister = qProgram.get_quantum_register("qRegister")
+cRegister = qProgram.get_classical_register("cRegister")
+qCircuit = qProgram.get_circuit("qCircuit")
 
 
 # First, we apply the Hadamard gates to every qubit
@@ -55,9 +75,12 @@ qCircuit.measure(qRegister[2], cRegister[2])
 
 device = 'ibmqx_qasm_simulator' # Backend to execute your program, in this case it is the online simulator
 circuits = ["qCircuit"]  # Group of circuits to execute
-qProgram.compile(circuits, "local_qasm_simulator") # Compile your program
+
+"""You forgot about assignment"""
+obj = qProgram.compile(circuits, "local_qasm_simulator") # Compile your program
+
 
 # Run your program in the device and check the execution result every 2 seconds
-result = qProgram.run(wait=2, timeout=240)
+result = qProgram.run(obj, wait=2, timeout=240)
 
-print(qProgram.get_counts("qCircuit"))
+print(result.get_counts("qCircuit"))
