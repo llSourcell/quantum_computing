@@ -10,7 +10,12 @@ from qiskit import QuantumProgram
 import Qconfig
 
 
+
 #Initialize a QuantumProgram object, with a quantum and classical register holding 3 bits
+
+"""qProgram methods require dictionaries so i looked into examples
+    and found another method of adding registers"""
+
 n = 3
 QPS_SPECS = {
     "circuits": [{
@@ -70,7 +75,10 @@ qCircuit.measure(qRegister[2], cRegister[2])
 
 device = 'ibmqx_qasm_simulator' # Backend to execute your program, in this case it is the online simulator
 circuits = ["qCircuit"]  # Group of circuits to execute
+
+"""You forgot about assignment"""
 obj = qProgram.compile(circuits, "local_qasm_simulator") # Compile your program
+
 
 # Run your program in the device and check the execution result every 2 seconds
 result = qProgram.run(obj, wait=2, timeout=240)
